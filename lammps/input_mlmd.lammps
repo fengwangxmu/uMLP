@@ -1,0 +1,75 @@
+variable        NSTEPS          equal 2000000
+variable        THERMO_FREQ     equal 200
+variable        DUMP_FREQ       equal 200
+variable        TEMP            equal 353.000000
+variable        PRES            equal 1.000000
+variable        TAU_T           equal 0.050000
+variable        TAU_P           equal 0.500000
+
+units           metal
+boundary        p p p
+atom_style      atomic
+
+neighbor        1.0 bin
+
+box          tilt large
+if "${restart} > 0" then "read_restart dpgen.restart.*" else "read_data conf.lmp"
+change_box   all triclinic
+mass      1   15.999
+mass      2   1.0080
+mass      3   14.0067
+mass      4   32.065
+mass      5   12.0107
+mass      6   18.9984
+mass      7   6.941
+mass      8   35.45
+mass      9   30.974
+mass     10   10.811
+mass     11   79.90
+mass     12   253.8
+mass     13   28.0855
+mass     14   55.85
+mass     15   22.9898
+mass     16   39.0983
+mass     17   65.38
+mass     18   24.305
+mass     19   40.078
+mass     20   132.9054
+mass     21   63.546
+
+pair_style      deepmd ../graph.000.pb  
+pair_coeff      * *   O H N S C F Li Cl P B Br I Si Fe Na K Zn 
+
+compute PE all pe
+compute KE all ke
+
+# --------------------- PRINT SECTION ----------------------
+variable PE  equal c_PE
+variable KE  equal c_KE
+variable time equal step*dt
+variable temp equal temp
+variable density equal density
+
+variable float1 format time %8.4f
+variable float2 format temp %8.4f
+variable float3 format PE   %8.4f
+variable float4 format KE   %8.4f
+variable float5 format density   %8.4f
+
+fix print_density all print ${DUMP_FREQ} "${float1}   ${float2}   ${float3}   ${float4}   ${float5}" file properties.ener screen "no" title   "#time T PE KE density"
+# --------------------- PRINT SECTION ----------------------
+
+
+thermo_style    custom step temp pe ke etotal press vol lx ly lz xy xz yz
+thermo          ${THERMO_FREQ}
+dump TRAJ all custom ${DUMP_FREQ} mlmd.lammpstrj id type element xu yu zu
+dump_modify TRAJ  sort id element O H N S C F Li Cl P B Br I Si Fe Na K Zn Mg Ca 
+
+restart         100000 dpgen.restart
+
+if "${restart} == 0" then "velocity        all create ${TEMP} 488462"
+#fix             1 all nvt temp ${TEMP} ${TEMP} ${TAU_T}
+fix             1 all npt temp ${TEMP} ${TEMP} ${TAU_T} iso ${PRES} ${PRES} ${TAU_P}
+
+timestep        0.000500
+run             ${NSTEPS} upto

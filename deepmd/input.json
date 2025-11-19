@@ -1,0 +1,102 @@
+{
+  "model": {
+    "descriptor": {
+      "type": "se_atten_v2",
+      "sel": 148,
+      "rcut_smth": 0.5,
+      "rcut": 6.0,
+      "neuron": [
+        25,
+        50,
+        100
+      ],
+      "resnet_dt": false,
+      "axis_neuron": 32,
+      "attn_layer": 0,
+      "attn_mask": false,
+      "attn_dotr": true,
+      "type_one_side": false,
+      "precision": "default",
+      "trainable": true,
+      "set_davg_zero": true,
+      "attn": 128,
+      "seed": 3251490710
+    },
+    "type_embedding": {
+      "neuron": [
+        8
+      ],
+      "resnet_dt": false,
+      "seed": 1,
+      "activation_function": "tanh",
+      "precision": "default",
+      "trainable": true
+    },
+    "fitting_net": {
+      "neuron": [
+        240,
+        240,
+        240
+      ],
+      "resnet_dt": true,
+      "seed": 96303111
+    },
+    "type_map": [
+      "O",
+      "H",
+      "N",
+      "S",
+      "C",
+      "F",
+      "Li",
+      "Cl",
+      "P",
+      "B",
+      "Br",
+      "I",
+      "Si",
+      "Fe",
+      "Na",
+      "K",
+      "Zn",
+      "Mg",
+      "Ca"
+    ]
+  },
+  "learning_rate": {
+    "type": "exp",
+    "start_lr": 0.0001,
+    "decay_steps": 20000
+  },
+  "loss": {
+    "start_pref_e": 0.02,
+    "limit_pref_e": 1,
+    "start_pref_f": 1000,
+    "limit_pref_f": 1,
+    "start_pref_v": 0,
+    "limit_pref_v": 1
+  },
+  "training": {
+    "numb_steps": 4000000,
+    "seed": 3470006,
+    "disp_file": "lcurve.out",
+    "numb_test": 10,
+    "disp_freq": 100,
+    "save_freq": 1000,
+    "save_ckpt": "model.ckpt",
+    "disp_training": true,
+    "time_training": true,
+    "profiling": false,
+    "profiling_file": "timeline.json",
+    "training_data": {
+      "set_prefix": "set",
+      "batch_size": 4,
+      "sys_probs": null,
+      "systems": [
+        @DATA_SET
+      ],
+      "auto_prob_style": "prob_sys_size"
+    }
+  }
+}
+
